@@ -19,6 +19,7 @@ class ImageService {
       List<dynamic> entries = json.decode(response.body);
       List<String> imagenames = [];
 
+      // ignore: avoid_function_literals_in_foreach_calls
       entries.forEach((element) {
         var map = Map<String, dynamic>.from(element);
         imagenames.add(map['imagename']);
@@ -37,6 +38,7 @@ class ImageService {
       List<dynamic> entries = json.decode(response.body);
       List<String> imagenames = [];
 
+      // ignore: avoid_function_literals_in_foreach_calls
       entries.forEach((element) {
         var map = Map<String, dynamic>.from(element);
         imagenames.add(map['id']);
@@ -49,6 +51,7 @@ class ImageService {
   }
 
   static Future<void> deleteImagesByID(String imageId) async {
+    // ignore: unused_local_variable
     final response = await http.delete(Uri.parse(apiUrl + "/image/$imageId"));
   }
 
@@ -57,6 +60,7 @@ class ImageService {
     final byteData = await image.getByteData();
     final tempFile =
         File("${(await getTemporaryDirectory()).path}/${image.name}");
+    // ignore: unused_local_variable
     final file = await tempFile.writeAsBytes(
       byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
@@ -86,6 +90,7 @@ class ImageService {
     final byteData = await image.getByteData();
     final tempFile =
         File("${(await getTemporaryDirectory()).path}/${image.name}");
+    // ignore: unused_local_variable
     final file = await tempFile.writeAsBytes(
       byteData.buffer
           .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),

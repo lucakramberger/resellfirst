@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:resellfirst/models/article_number_model.dart';
-import 'package:resellfirst/models/size_model.dart';
 
 class ArticleNumberService {
   static String apiUrl = "https://backend.resellfirst.de";
@@ -12,7 +11,6 @@ class ArticleNumberService {
   static Future<ArticleNumber> createArticleNumbers(
       ArticleNumber articleNumber) async {
     String jsonString = jsonEncode(articleNumber);
-    print(jsonString);
 
     final response = await http.post(Uri.parse(apiUrl + "/artikelnummer"),
         body: jsonString,
@@ -40,6 +38,7 @@ class ArticleNumberService {
       List<dynamic> entries = json.decode(response.body);
       List<ArticleNumber> articlenumbers = [];
 
+      // ignore: avoid_function_literals_in_foreach_calls
       entries.forEach((element) {
         var map = Map<String, dynamic>.from(element);
         articlenumbers.add(ArticleNumber.fromJson(map));
@@ -51,6 +50,7 @@ class ArticleNumberService {
   }
 
   static Future<void> deleteArticlenumbersByID(int artnumberid) async {
+    // ignore: unused_local_variable
     final response =
         await http.delete(Uri.parse(apiUrl + "/artikelnummer/$artnumberid"));
   }

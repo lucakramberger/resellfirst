@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:resellfirst/provider/items_provider.dart';
 import 'package:resellfirst/screens/home.dart';
@@ -15,6 +12,7 @@ class MyApp extends StatelessWidget {
 
   _init(BuildContext context) async {
     List<Product> products = await ApiSerivce.getProducts();
+    // ignore: avoid_function_literals_in_foreach_calls
     products.forEach((element) async {
       Provider.of<ItemsProvider>(context, listen: false).loadItem(element);
     });
@@ -38,7 +36,7 @@ class MyApp extends StatelessWidget {
                         const FloatingActionButtonThemeData(
                             backgroundColor: Color(0xFF85b7d6),
                             splashColor: Color(0xFF85b7d6))),
-                home: Homepage());
+                home: const Homepage());
           }
           return MaterialApp(
               title: 'resellfirst',

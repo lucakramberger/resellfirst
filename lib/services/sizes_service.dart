@@ -59,6 +59,7 @@ class SizesService {
       List<dynamic> entries = json.decode(response.body);
       List<SizeAmount> sizeAmount = [];
 
+      // ignore: avoid_function_literals_in_foreach_calls
       entries.forEach((element) {
         var map = Map<String, dynamic>.from(element);
         sizeAmount.add(SizeAmount.fromJson(map));
@@ -70,6 +71,7 @@ class SizesService {
   }
 
   static Future<void> deleteSizesByID(int sizeId) async {
+    // ignore: unused_local_variable
     final response =
         await http.delete(Uri.parse(apiUrl + "/sizeamountprice/$sizeId"));
   }

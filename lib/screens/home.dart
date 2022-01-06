@@ -5,10 +5,9 @@ import 'package:resellfirst/models/item_model.dart';
 import 'package:resellfirst/provider/items_provider.dart';
 import 'package:resellfirst/screens/add_item_screen.dart';
 import 'package:resellfirst/screens/item_detail_screen.dart';
-import 'package:resellfirst/services/product_service.dart';
 
 class Homepage extends StatefulWidget {
-  Homepage({Key? key}) : super(key: key);
+  const Homepage({Key? key}) : super(key: key);
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -48,7 +47,7 @@ class _HomepageState extends State<Homepage> {
           child: const Icon(Icons.add),
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AddItemScreen()));
+                MaterialPageRoute(builder: (context) => const AddItemScreen()));
           },
         ),
         body: SafeArea(

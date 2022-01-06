@@ -2,10 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:resellfirst/models/item_model.dart';
 import 'package:resellfirst/provider/items_provider.dart';
 import 'package:resellfirst/screens/edit_item_screen.dart';
-import 'package:resellfirst/screens/home.dart';
 
 class ItemDetailScreen extends StatelessWidget {
   const ItemDetailScreen({Key? key, required this.productIndex})
@@ -72,7 +70,7 @@ class ItemDetailScreen extends StatelessWidget {
                         _buildPopupDialogWithSize(context),
                   );
                 },
-                icon: Icon(Icons.delete))
+                icon: const Icon(Icons.delete))
           ],
         ),
         body: SingleChildScrollView(
@@ -218,6 +216,7 @@ class ItemDetailScreen extends StatelessWidget {
                       items.items[productIndex].sizes!.length, (index) {
                     String artNumbers = '';
                     items.items[productIndex].sizes![index].articleNumbers!
+                        // ignore: avoid_function_literals_in_foreach_calls
                         .forEach((element) {
                       artNumbers += element.artikelnummer;
                       artNumbers += ',';

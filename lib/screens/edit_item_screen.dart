@@ -12,7 +12,7 @@ import 'package:resellfirst/models/size_model.dart';
 import 'package:resellfirst/provider/items_provider.dart';
 
 class EditItemScreen extends StatefulWidget {
-  EditItemScreen({Key? key, required this.product}) : super(key: key);
+  const EditItemScreen({Key? key, required this.product}) : super(key: key);
   final Product product;
   @override
   State<EditItemScreen> createState() => _EditItemScreenState();
@@ -44,8 +44,6 @@ class _EditItemScreenState extends State<EditItemScreen> {
   final TextEditingController _skuController = TextEditingController();
 
   final TextEditingController _nameController = TextEditingController();
-
-  final TextEditingController _brandController = TextEditingController();
 
   final TextEditingController _solematerialController = TextEditingController();
 
@@ -229,6 +227,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
     _amountController.text = size.amount.toString();
     _priceController.text = size.price.toString();
     if (size.articleNumbers != null) {
+      // ignore: avoid_function_literals_in_foreach_calls
       size.articleNumbers!.forEach((element) =>
           _artNumberController.text += element.artikelnummer + ',');
     }
@@ -594,6 +593,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     : List.generate(sizes!.length, (index) {
                         String artNumbers = '';
                         if (sizes![index].articleNumbers != null) {
+                          // ignore: avoid_function_literals_in_foreach_calls
                           sizes![index].articleNumbers!.forEach((element) {
                             artNumbers += element.artikelnummer;
                             artNumbers += ',';
@@ -713,7 +713,6 @@ class _EditItemScreenState extends State<EditItemScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          print('asdf' + widget.product.sizes!.length.toString());
           setState(() {
             _isLoading = !_isLoading;
           });

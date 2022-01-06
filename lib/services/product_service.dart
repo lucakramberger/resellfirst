@@ -4,8 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:resellfirst/models/item_model.dart';
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 class ApiSerivce {
   static String apiUrl = "https://backend.resellfirst.de";
 
@@ -15,6 +13,7 @@ class ApiSerivce {
       List<dynamic> entries = json.decode(response.body);
       List<Product> products = [];
 
+      // ignore: avoid_function_literals_in_foreach_calls
       entries.forEach((element) {
         var map = Map<String, dynamic>.from(element);
         Product pr = Product.fromJson(map);
@@ -64,6 +63,7 @@ class ApiSerivce {
   }
 
   static Future<void> deleteProduct(int productId) async {
+    // ignore: unused_local_variable
     final response = await http
         .delete(Uri.parse(apiUrl + "/product/$productId"), headers: {
       'Content-type': 'application/json',

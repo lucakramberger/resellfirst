@@ -12,7 +12,7 @@ import 'package:resellfirst/models/size_model.dart';
 import 'package:resellfirst/provider/items_provider.dart';
 
 class AddItemScreen extends StatefulWidget {
-  AddItemScreen({Key? key}) : super(key: key);
+  const AddItemScreen({Key? key}) : super(key: key);
 
   @override
   State<AddItemScreen> createState() => _AddItemScreenState();
@@ -22,8 +22,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final TextEditingController _skuController = TextEditingController();
 
   final TextEditingController _nameController = TextEditingController();
-
-  final TextEditingController _brandController = TextEditingController();
 
   final TextEditingController _solematerialController = TextEditingController();
 
@@ -201,6 +199,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
     _amountController.text = size.amount.toString();
     _priceController.text = size.price.toString();
 
+    // ignore: avoid_function_literals_in_foreach_calls
     size.articleNumbers!.forEach(
         (element) => _artNumberController.text += element.artikelnummer);
 
@@ -275,11 +274,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
-  String _error = 'No Error Dectected';
-
   Future<void> loadAssets() async {
     List<Asset> resultList = <Asset>[];
-    String error = 'No Error Detected';
 
     try {
       resultList = await MultiImagePicker.pickImages(
@@ -298,9 +294,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
           selectCircleStrokeColor: "#000000",
         ),
       );
-    } on Exception catch (e) {
-      error = e.toString();
-    }
+      // ignore: empty_catches, unused_catch_clause
+    } on Exception catch (e) {}
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -309,8 +304,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
     setState(() {
       images = resultList;
-      print(images!.length);
-      _error = error;
     });
   }
 
@@ -631,6 +624,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       ]
                     : List.generate(sizes!.length, (index) {
                         String artNumbers = '';
+                        // ignore: avoid_function_literals_in_foreach_calls
                         sizes![index].articleNumbers!.forEach((element) {
                           artNumbers += element.artikelnummer;
                           artNumbers += ',';
