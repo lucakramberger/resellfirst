@@ -139,7 +139,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               maxlines: 1,
               text: 'Größe',
               maxLength: 240,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.text,
               controller: _sizeController,
             ),
             const SizedBox(
@@ -149,7 +149,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               maxlines: 1,
               text: 'Menge',
               maxLength: 240,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.text,
               controller: _amountController,
             ),
             const SizedBox(
@@ -159,7 +159,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               maxlines: 1,
               text: 'Preis',
               maxLength: 240,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.text,
               controller: _priceController,
             ),
             const SizedBox(
@@ -169,7 +169,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               maxlines: 5,
               text: 'Artikelnummern',
               maxLength: 10000,
-              textInputType: TextInputType.number,
+              textInputType: TextInputType.text,
               controller: _artNumberController,
             ),
           ],
@@ -234,7 +234,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             maxlines: 1,
             text: 'Größe',
             maxLength: 240,
-            textInputType: TextInputType.number,
+            textInputType: TextInputType.text,
             controller: _sizeController,
           ),
           const SizedBox(
@@ -244,7 +244,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             maxlines: 1,
             text: 'Menge',
             maxLength: 240,
-            textInputType: TextInputType.number,
+            textInputType: TextInputType.text,
             controller: _amountController,
           ),
           const SizedBox(
@@ -254,7 +254,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             maxlines: 1,
             text: 'Preis',
             maxLength: 240,
-            textInputType: TextInputType.number,
+            textInputType: TextInputType.text,
             controller: _priceController,
           ),
           const SizedBox(
@@ -264,7 +264,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             maxlines: 5,
             text: 'Artikelnummern',
             maxLength: 10000,
-            textInputType: TextInputType.number,
+            textInputType: TextInputType.text,
             controller: _artNumberController,
           ),
         ],
@@ -367,7 +367,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'SKU',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _skuController,
                   validator: (val) {
                     if (val!.isEmpty) {
@@ -383,7 +383,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'Name',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _nameController,
                   validator: (val) {
                     if (val!.isEmpty) {
@@ -399,7 +399,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'Farbe',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _colorController,
                   validator: (val) {
                     if (val!.isEmpty) {
@@ -591,7 +591,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'Beschreibung',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _descController,
                 ),
                 const SizedBox(
@@ -601,7 +601,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'Sohlen Material',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _solematerialController,
                 ),
                 const SizedBox(
@@ -611,7 +611,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'Außenmaterial',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _uppermaterialController,
                 ),
                 const SizedBox(
@@ -621,7 +621,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   maxlines: 1,
                   text: 'Innenmaterial',
                   maxLength: 240,
-                  textInputType: TextInputType.name,
+                  textInputType: TextInputType.text,
                   controller: _innermaterialController,
                 ),
                 const SizedBox(
