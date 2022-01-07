@@ -40,6 +40,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
   	<string>Upload images for screen background</string>
   	<key>NSCameraUsageDescription</key>
