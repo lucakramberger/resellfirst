@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:resellfirst/models/article_number_model.dart';
 import 'package:resellfirst/models/size_model.dart';
 import 'package:resellfirst/services/article_number_service.dart';
@@ -14,6 +17,13 @@ class ItemsProvider extends ChangeNotifier {
   int oldindex = -1;
 
   Future<void> addItem(Product item, bool update) async {
+    if (item.category == 'kategorie') {
+      item.category = '';
+    }
+    if (item.subcategory == 'unterkategorie') {
+      item.subcategory = '';
+    }
+
     int id = await ApiSerivce.createProduct(item);
     if (!update) {
       String mainimagename =
@@ -52,10 +62,19 @@ class ItemsProvider extends ChangeNotifier {
     } else {
       items.add(item);
     }
+    Directory dir = await getTemporaryDirectory();
+    dir.deleteSync(recursive: true);
+    dir.create();
     notifyListeners();
   }
 
   void loadItem(Product item) async {
+    if (item.category == '') {
+      item.category = 'kategorie';
+    }
+    if (item.subcategory == '') {
+      item.subcategory = 'unterkategorie';
+    }
     List<String> imagenames =
         await ImageService.getImagenamesByProductID(item.id!);
     item.imagenames = imagenames;

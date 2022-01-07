@@ -1,10 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:resellfirst/components/rf_datepicker.dart';
 import 'package:resellfirst/components/rf_textfield.dart';
 import 'package:resellfirst/models/article_number_model.dart';
 import 'package:resellfirst/models/item_model.dart';
@@ -35,7 +36,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   final TextEditingController _colorController = TextEditingController();
 
+  final formKey = GlobalKey<FormState>();
+
+  DateTime selectedDate = DateTime.now();
+
   bool _isLoading = false;
+
+  ImagePicker picker = ImagePicker();
 
   String? sku = '';
 
@@ -59,7 +66,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   String? description = '';
 
-  List<Asset>? images = [];
+  List<XFile>? images = [];
 
   bool published = false;
 
@@ -98,6 +105,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
     'nike': ['unterkategorie'],
     'ikea': ['unterkategorie'],
   };
+
+  _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate, // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
 
   Widget _buildPopupDialog(BuildContext context) {
     final TextEditingController _sizeController = TextEditingController();
@@ -275,35 +296,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   Future<void> loadAssets() async {
-    List<Asset> resultList = <Asset>[];
-
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 10,
-        enableCamera: true,
-        selectedAssets: images!,
-        cupertinoOptions: const CupertinoOptions(
-          takePhotoIcon: "chat",
-          doneButtonTitle: "Fatto",
-        ),
-        materialOptions: const MaterialOptions(
-          actionBarColor: "#abcdef",
-          actionBarTitle: "Example App",
-          allViewTitle: "All Photos",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#000000",
-        ),
-      );
-      // ignore: empty_catches, unused_catch_clause
-    } on Exception catch (e) {}
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+    List<XFile>? resultList = await picker.pickMultiImage();
 
     setState(() {
-      images = resultList;
+      if (resultList != null) {
+        images = resultList;
+      }
     });
   }
 
@@ -315,93 +313,189 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Produkt hinuzfügen'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(MediaQuery.of(context).size.width * .08),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  loadAssets();
-                },
-                child: SizedBox(
-                  height: 200,
-                  child: ListView(
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: images!.isEmpty
-                        ? [
-                            Container(
-                              height: 200,
-                              width: 200,
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(Icons.add),
-                              ),
-                            )
-                          ]
-                        : List.generate(images!.length, (index) {
-                            Asset asset = images![index];
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: AssetThumb(
-                                asset: asset,
-                                width: 200,
+    return Form(
+      key: formKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Produkt hinuzfügen'),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * .08),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    loadAssets();
+                  },
+                  child: SizedBox(
+                    height: 200,
+                    child: ListView(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: images!.isEmpty
+                          ? [
+                              Container(
                                 height: 200,
-                              ),
-                            );
-                          }),
+                                width: 200,
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(Icons.add),
+                                ),
+                              )
+                            ]
+                          : List.generate(images!.length, (index) {
+                              XFile asset = images![index];
+                              return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: SizedBox(
+                                      width: 200,
+                                      height: 200,
+                                      child: Image.file(File(asset.path))));
+                            }),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'SKU',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _skuController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'Name',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _nameController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'Farbe',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _colorController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  const Expanded(child: RFDatePicker()),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: FormField<String>(
+                const Text('Mindestens 1 Foto wählen!'),
+                const SizedBox(
+                  height: 20,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'SKU',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _skuController,
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Sku muss ausgefüllt sein';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'Name',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _nameController,
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Name muss ausgefüllt sein';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'Farbe',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _colorController,
+                  validator: (val) {
+                    if (val!.isEmpty) {
+                      return 'Farbe muss ausgefüllt sein';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text(
+                              selectedDate.day.toString() +
+                                  '.' +
+                                  selectedDate.month.toString() +
+                                  '.' +
+                                  selectedDate.year.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Colors.grey[700]),
+                            ),
+                          ),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.grey[200],
+                          )),
+                    )),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const Text('Marke ist ein Pflichtfeld'),
+                          FormField<String>(
+                            builder: (FormFieldState<String> state) {
+                              return InputDecorator(
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.all(15),
+                                  filled: true,
+                                  fillColor: Colors.grey[
+                                      200], //Theme.of(context).canvasColor,
+                                  focusColor: Colors.lightBlue,
+                                  hoverColor: Colors.lightBlue,
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      borderSide: BorderSide.none),
+                                  isDense: true,
+                                  counterText: '',
+                                ),
+                                isEmpty: brand == '',
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(color: Colors.grey[700]),
+                                      value: brand,
+                                      isDense: true,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          brand = newValue;
+                                        });
+                                      },
+                                      items: List.generate(
+                                          brands.length,
+                                          (index) => DropdownMenuItem<String>(
+                                                value: brands.elementAt(index),
+                                                child: Text(
+                                                    brands.elementAt(index)),
+                                              ))),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Expanded(child: FormField<String>(
                       builder: (FormFieldState<String> state) {
                         return InputDecorator(
                           decoration: InputDecoration(
@@ -417,361 +511,326 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             isDense: true,
                             counterText: '',
                           ),
-                          isEmpty: brand == '',
+                          isEmpty: category == '',
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyText1!
                                     .copyWith(color: Colors.grey[700]),
-                                value: brand,
+                                value: category,
                                 isDense: true,
                                 onChanged: (newValue) {
                                   setState(() {
-                                    brand = newValue;
+                                    category = newValue;
                                   });
                                 },
                                 items: List.generate(
-                                    brands.length,
+                                    categories[brand]!.length,
                                     (index) => DropdownMenuItem<String>(
-                                          value: brands.elementAt(index),
-                                          child: Text(brands.elementAt(index)),
+                                          value: categories[brand]!
+                                              .elementAt(index),
+                                          child: Text(categories[brand]!
+                                              .elementAt(index)),
                                         ))),
                           ),
                         );
                       },
+                    )),
+                    const SizedBox(
+                      width: 15,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  Expanded(child: FormField<String>(
-                    builder: (FormFieldState<String> state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(15),
-                          filled: true,
-                          fillColor:
-                              Colors.grey[200], //Theme.of(context).canvasColor,
-                          focusColor: Colors.lightBlue,
-                          hoverColor: Colors.lightBlue,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide.none),
-                          isDense: true,
-                          counterText: '',
-                        ),
-                        isEmpty: category == '',
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(color: Colors.grey[700]),
-                              value: category,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  category = newValue;
-                                });
-                              },
-                              items: List.generate(
-                                  categories[brand]!.length,
-                                  (index) => DropdownMenuItem<String>(
-                                        value:
-                                            categories[brand]!.elementAt(index),
-                                        child: Text(categories[brand]!
-                                            .elementAt(index)),
-                                      ))),
-                        ),
-                      );
-                    },
-                  )),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(child: FormField<String>(
-                    builder: (FormFieldState<String> state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(15),
-                          filled: true,
-                          fillColor:
-                              Colors.grey[200], //Theme.of(context).canvasColor,
-                          focusColor: Colors.lightBlue,
-                          hoverColor: Colors.lightBlue,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide.none),
-                          isDense: true,
-                          counterText: '',
-                        ),
-                        isEmpty: subcatergory == '',
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(color: Colors.grey[700]),
-                              value: subcatergory,
-                              isDense: true,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  subcatergory = newValue;
-                                });
-                              },
-                              items: List.generate(
-                                  subcategories[category]!.length,
-                                  (index) => DropdownMenuItem<String>(
-                                        value: subcategories[category]!
-                                            .elementAt(index),
-                                        child: Text(subcategories[category]!
-                                            .elementAt(index)),
-                                      ))),
-                        ),
-                      );
-                    },
-                  )),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'Beschreibung',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _descController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'Sohlen Material',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _solematerialController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'Außenmaterial',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _uppermaterialController,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              RFTextField(
-                maxlines: 1,
-                text: 'Innenmaterial',
-                maxLength: 240,
-                textInputType: TextInputType.name,
-                controller: _innermaterialController,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Veröffentlichen ?',
+                    Expanded(child: FormField<String>(
+                      builder: (FormFieldState<String> state) {
+                        return InputDecorator(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(15),
+                            filled: true,
+                            fillColor: Colors
+                                .grey[200], //Theme.of(context).canvasColor,
+                            focusColor: Colors.lightBlue,
+                            hoverColor: Colors.lightBlue,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide.none),
+                            isDense: true,
+                            counterText: '',
+                          ),
+                          isEmpty: subcatergory == '',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(color: Colors.grey[700]),
+                                value: subcatergory,
+                                isDense: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subcatergory = newValue;
+                                  });
+                                },
+                                items: List.generate(
+                                    subcategories[category]!.length,
+                                    (index) => DropdownMenuItem<String>(
+                                          value: subcategories[category]!
+                                              .elementAt(index),
+                                          child: Text(subcategories[category]!
+                                              .elementAt(index)),
+                                        ))),
+                          ),
+                        );
+                      },
+                    )),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'Beschreibung',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _descController,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'Sohlen Material',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _solematerialController,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'Außenmaterial',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _uppermaterialController,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                RFTextField(
+                  maxlines: 1,
+                  text: 'Innenmaterial',
+                  maxLength: 240,
+                  textInputType: TextInputType.name,
+                  controller: _innermaterialController,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Veröffentlichen ?',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.grey[700], fontSize: 17)),
+                    CupertinoSwitch(
+                      value: published,
+                      onChanged: (value) {
+                        setState(() {
+                          published = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Größen',
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1!
                           .copyWith(color: Colors.grey[700], fontSize: 17)),
-                  CupertinoSwitch(
-                    value: published,
-                    onChanged: (value) {
-                      setState(() {
-                        published = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Größen',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.grey[700], fontSize: 17)),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: sizes!.isEmpty
-                    ? [
-                        Text('Noch keine Größen vorhanden',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(color: Colors.grey[700]))
-                      ]
-                    : List.generate(sizes!.length, (index) {
-                        String artNumbers = '';
-                        // ignore: avoid_function_literals_in_foreach_calls
-                        sizes![index].articleNumbers!.forEach((element) {
-                          artNumbers += element.artikelnummer;
-                          artNumbers += ',';
-                        });
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            'Größe: ' +
-                                                sizes![index].size.toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1!
-                                                .copyWith(
-                                                    color: Colors.grey[700])),
-                                        Text(
-                                            'Menge: ' +
-                                                sizes![index].amount.toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1!
-                                                .copyWith(
-                                                    color: Colors.grey[700])),
-                                        Text(
-                                            'Preis: ' +
-                                                sizes![index].price.toString() +
-                                                '€',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1!
-                                                .copyWith(
-                                                    color: Colors.grey[700])),
-                                        Text('Artikelnummern:\n' + artNumbers,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1!
-                                                .copyWith(
-                                                    color: Colors.grey[700])),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    _buildPopupDialogWithSize(
-                                                        context, sizes![index]),
-                                              );
-                                            },
-                                            icon: const Icon(
-                                              Icons.edit,
-                                              size: 18,
-                                            )),
-                                        IconButton(
-                                            onPressed: () {
-                                              removeSize(index);
-                                            },
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              size: 18,
-                                            ))
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.grey[200],
-                              )),
-                        );
-                      }),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              MaterialButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupDialog(context),
-                  );
-                },
-                child: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(500),
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    size: 30,
-                  ),
                 ),
-              )
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: sizes!.isEmpty
+                      ? [
+                          Text('Noch keine Größen vorhanden',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Colors.grey[700]))
+                        ]
+                      : List.generate(sizes!.length, (index) {
+                          String artNumbers = '';
+                          // ignore: avoid_function_literals_in_foreach_calls
+                          sizes![index].articleNumbers!.forEach((element) {
+                            artNumbers += element.artikelnummer;
+                            artNumbers += ',';
+                          });
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                              'Größe: ' +
+                                                  sizes![index].size.toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      color: Colors.grey[700])),
+                                          Text(
+                                              'Menge: ' +
+                                                  sizes![index]
+                                                      .amount
+                                                      .toString(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      color: Colors.grey[700])),
+                                          Text(
+                                              'Preis: ' +
+                                                  sizes![index]
+                                                      .price
+                                                      .toString() +
+                                                  '€',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      color: Colors.grey[700])),
+                                          Text('Artikelnummern:\n' + artNumbers,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1!
+                                                  .copyWith(
+                                                      color: Colors.grey[700])),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      _buildPopupDialogWithSize(
+                                                          context,
+                                                          sizes![index]),
+                                                );
+                                              },
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                size: 18,
+                                              )),
+                                          IconButton(
+                                              onPressed: () {
+                                                removeSize(index);
+                                              },
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                size: 18,
+                                              ))
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.grey[200],
+                                )),
+                          );
+                        }),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _buildPopupDialog(context),
+                    );
+                  },
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(500),
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      size: 30,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          setState(() {
-            _isLoading = !_isLoading;
-          });
-          Product product = Product(
-              brand: brand!,
-              color: _colorController.text,
-              category: category!,
-              subcategory: subcatergory!,
-              description: _descController.text,
-              sku: _skuController.text,
-              innermaterial: _innermaterialController.text,
-              name: _nameController.text,
-              published: published ? 1 : 0,
-              releasedate: releaseDate!,
-              solematerial: _solematerialController.text,
-              uppermaterial: _uppermaterialController.text,
-              mainimage: 'empty',
-              images: images!,
-              sizes: sizes!,
-              createdat: DateTime.now().toString(),
-              mainimagename: 'empty');
-          Provider.of<ItemsProvider>(context, listen: false)
-              .addItem(product, false)
-              .then((value) => Navigator.pop(context));
-        },
-        label: _isLoading
-            ? const CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xffe78857)),
-                backgroundColor: Color(0xff85b7d6))
-            : const Text('Hinzufügen'),
+        floatingActionButton: FloatingActionButton.extended(
+            onPressed: () async {
+              if (formKey.currentState!.validate() &&
+                  images!.isNotEmpty &&
+                  brand != 'marke') {
+                releaseDate = selectedDate.month.toString() +
+                    '.' +
+                    selectedDate.year.toString();
+                setState(() {
+                  _isLoading = !_isLoading;
+                });
+                Product product = Product(
+                    brand: brand!,
+                    color: _colorController.text,
+                    category: category!,
+                    subcategory: subcatergory!,
+                    description: _descController.text,
+                    sku: _skuController.text,
+                    innermaterial: _innermaterialController.text,
+                    name: _nameController.text,
+                    published: published ? 1 : 0,
+                    releasedate: releaseDate!,
+                    solematerial: _solematerialController.text,
+                    uppermaterial: _uppermaterialController.text,
+                    mainimage: 'empty',
+                    images: images!,
+                    sizes: sizes!,
+                    createdat: DateTime.now().toString(),
+                    mainimagename: 'empty');
+                Provider.of<ItemsProvider>(context, listen: false)
+                    .addItem(product, false)
+                    .then((value) => Navigator.pop(context));
+              }
+            },
+            label: _isLoading
+                ? const CircularProgressIndicator.adaptive(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xffe78857)),
+                    backgroundColor: Color(0xff85b7d6))
+                : const Text('Hinzufügen')),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http_parser/http_parser.dart';
@@ -55,22 +56,13 @@ class ImageService {
     final response = await http.delete(Uri.parse(apiUrl + "/image/$imageId"));
   }
 
-  static Future<String> uploadMainImage(int productId, Asset image) async {
-    await restoreTemp();
-    final byteData = await image.getByteData();
-    final tempFile =
-        File("${(await getTemporaryDirectory()).path}/${image.name}");
-    // ignore: unused_local_variable
-    final file = await tempFile.writeAsBytes(
-      byteData.buffer
-          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
-    );
-
-    var fileType = image.name?.split('.')[1];
+  static Future<String> uploadMainImage(int productId, XFile image) async {
+    var fileType = image.name.split('.')[1];
+    print(fileType);
     var request = http.MultipartRequest(
         "POST", Uri.parse(apiUrl + "/mainimage-file/$productId"));
-    request.files.add(await http.MultipartFile.fromPath('file', tempFile.path,
-        contentType: MediaType('image', fileType!)));
+    request.files.add(await http.MultipartFile.fromPath('file', image.path,
+        contentType: MediaType('image', fileType)));
 
     final response = await request.send();
 
@@ -85,22 +77,12 @@ class ImageService {
   }
 
   static Future<String> uploadImagesToProductId(
-      int productId, Asset image) async {
-    await restoreTemp();
-    final byteData = await image.getByteData();
-    final tempFile =
-        File("${(await getTemporaryDirectory()).path}/${image.name}");
-    // ignore: unused_local_variable
-    final file = await tempFile.writeAsBytes(
-      byteData.buffer
-          .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
-    );
-
-    var fileType = image.name?.split('.')[1];
+      int productId, XFile image) async {
+    var fileType = image.name.split('.')[1];
     var request = http.MultipartRequest(
         "POST", Uri.parse(apiUrl + "/image-file/$productId"));
-    request.files.add(await http.MultipartFile.fromPath('file', tempFile.path,
-        contentType: MediaType('image', fileType!)));
+    request.files.add(await http.MultipartFile.fromPath('file', image.path,
+        contentType: MediaType('image', fileType)));
 
     final response = await request.send();
 
@@ -111,11 +93,5 @@ class ImageService {
     } else {
       throw Exception('Failed to load Products');
     }
-  }
-
-  static restoreTemp() async {
-    Directory dir = await getTemporaryDirectory();
-    dir.deleteSync(recursive: true);
-    dir.create();
   }
 }

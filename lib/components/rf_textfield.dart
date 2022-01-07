@@ -13,7 +13,8 @@ class RFTextField extends StatefulWidget {
       this.suffixIcon,
       required this.maxlines,
       this.onChanged,
-      this.onFieldSubmit})
+      this.onFieldSubmit,
+      this.validator})
       : super(key: key);
 
   Icon? icon;
@@ -27,6 +28,7 @@ class RFTextField extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
   final maxlines;
   void Function(String)? onChanged;
+  final String? Function(String?)? validator;
 
   @override
   _RFTextFieldState createState() => _RFTextFieldState();
@@ -49,7 +51,7 @@ class _RFTextFieldState extends State<RFTextField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-      child: TextField(
+      child: TextFormField(
         onChanged: widget.onChanged,
         keyboardType: widget.textInputType,
         textAlignVertical: TextAlignVertical.center,
@@ -72,6 +74,7 @@ class _RFTextFieldState extends State<RFTextField> {
         ),
         maxLength: widget.maxLength,
         maxLines: widget.maxlines,
+        validator: widget.validator,
         enabled: widget.enabled,
         controller: widget.controller,
       ),

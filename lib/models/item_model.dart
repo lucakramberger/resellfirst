@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:resellfirst/models/size_model.dart';
 
@@ -49,7 +50,7 @@ class Product {
   int published;
   String createdat;
   int? id = 0;
-  List<Asset>? images;
+  List<XFile>? images;
   List<String>? imagenames = [];
   List<SizeAmount>? sizes = [];
 
