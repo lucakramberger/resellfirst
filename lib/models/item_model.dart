@@ -5,7 +5,6 @@
 import 'dart:convert';
 
 import 'package:image_picker/image_picker.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:resellfirst/models/size_model.dart';
 
 Product productFromJson(String str) => Product.fromJson(json.decode(str));
