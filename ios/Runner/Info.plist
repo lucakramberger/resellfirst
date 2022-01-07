@@ -49,6 +49,5 @@
   	<string>Post videos to profile</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Webshop uploader</string>
-	<false/>
 </dict>
 </plist>
