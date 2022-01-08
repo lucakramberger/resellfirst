@@ -222,10 +222,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
     // ignore: avoid_function_literals_in_foreach_calls
     size.articleNumbers!.forEach(
-        (element) => _artNumberController.text += element.artikelnummer);
+        (element) => _artNumberController.text += element.artikelnummer + ',');
 
     return AlertDialog(
-      title: const Text('Größen hinzufügen'),
+      title: const Text('Größen editieren'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,7 +289,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             Navigator.of(context).pop();
           },
           textColor: Theme.of(context).primaryColor,
-          child: const Text('Hinzufügen'),
+          child: const Text('Editieren'),
         ),
       ],
     );
@@ -821,9 +821,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     createdat: DateTime.now().toString(),
                     mainimagename: 'empty');
                 Provider.of<ItemsProvider>(context, listen: false)
-                    .addItem(product, false);
-                await Future.delayed(const Duration(seconds: 5));
-                Navigator.pop(context);
+                    .addItem(product, false)
+                    .then((value) => Navigator.pop(context));
               }
             },
             label: _isLoading

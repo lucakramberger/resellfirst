@@ -42,6 +42,13 @@ class _HomepageState extends State<Homepage> {
                   maxlines: 1),
             ),
           ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  setState(() {});
+                },
+                icon: const Icon(Icons.refresh_rounded))
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),

@@ -59,8 +59,10 @@ class ItemsProvider extends ChangeNotifier {
     item.id = id;
     if (update) {
       items.insert(oldindex, item);
+      notifyListeners();
     } else {
       items.add(item);
+      notifyListeners();
     }
     Directory dir = await getTemporaryDirectory();
     dir.deleteSync(recursive: true);

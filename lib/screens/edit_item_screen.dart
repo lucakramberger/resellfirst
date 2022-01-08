@@ -248,10 +248,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
 
     // ignore: avoid_function_literals_in_foreach_calls
     size.articleNumbers!.forEach(
-        (element) => _artNumberController.text += element.artikelnummer);
+        (element) => _artNumberController.text += element.artikelnummer + ',');
 
     return AlertDialog(
-      title: const Text('Größen hinzufügen'),
+      title: const Text('Größen editieren'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +315,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
             Navigator.of(context).pop();
           },
           textColor: Theme.of(context).primaryColor,
-          child: const Text('Hinzufügen'),
+          child: const Text('Editieren'),
         ),
       ],
     );
@@ -811,7 +811,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     createdat: DateTime.now().toString(),
                     mainimagename: 'empty');
                 Provider.of<ItemsProvider>(context, listen: false)
-                    .addItem(product, false)
+                    .updateItem(widget.product, product)
                     .then((value) => Navigator.pop(context));
               }
             },
