@@ -50,39 +50,32 @@ class _HomepageState extends State<Homepage> {
                 MaterialPageRoute(builder: (context) => const AddItemScreen()));
           },
         ),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              print('Hello');
-            });
-          },
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.count(
-                physics: const BouncingScrollPhysics(),
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                crossAxisCount: 2,
-                children: List.generate(
-                    _searchController.text.isEmpty
-                        ? items.items.length
-                        : results.length,
-                    (index) => GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ItemDetailScreen(
-                                          productIndex: index,
-                                        )));
-                          },
-                          child: Image.network('http://images.resellfirst.de/' +
-                              (_searchController.text.isEmpty
-                                  ? items.items[index].mainimagename
-                                  : results[index].mainimagename)),
-                        )),
-              ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.count(
+              physics: const BouncingScrollPhysics(),
+              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8.0,
+              crossAxisCount: 2,
+              children: List.generate(
+                  _searchController.text.isEmpty
+                      ? items.items.length
+                      : results.length,
+                  (index) => GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ItemDetailScreen(
+                                        productIndex: index,
+                                      )));
+                        },
+                        child: Image.network('http://images.resellfirst.de/' +
+                            (_searchController.text.isEmpty
+                                ? items.items[index].mainimagename
+                                : results[index].mainimagename)),
+                      )),
             ),
           ),
         ),

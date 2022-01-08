@@ -822,6 +822,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     mainimagename: 'empty');
                 Provider.of<ItemsProvider>(context, listen: false)
                     .addItem(product, false);
+                await Future.delayed(const Duration(seconds: 2));
                 Navigator.pop(context);
               }
             },
