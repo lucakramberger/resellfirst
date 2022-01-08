@@ -805,11 +805,11 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     releasedate: releaseDate!,
                     solematerial: _solematerialController.text,
                     uppermaterial: _uppermaterialController.text,
-                    mainimage: 'empty',
+                    mainimage: mainimage!,
                     images: images!,
                     sizes: sizes!,
                     createdat: DateTime.now().toString(),
-                    mainimagename: 'empty');
+                    mainimagename: mainimagename!);
                 Provider.of<ItemsProvider>(context, listen: false)
                     .updateItem(widget.product, product);
                 await Future.delayed(const Duration(seconds: 5));
