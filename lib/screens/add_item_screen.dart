@@ -821,8 +821,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     createdat: DateTime.now().toString(),
                     mainimagename: 'empty');
                 Provider.of<ItemsProvider>(context, listen: false)
-                    .addItem(product, false)
-                    .then((value) => Navigator.pop(context));
+                    .addItem(product, false);
+                await Future.delayed(const Duration(seconds: 5));
+                Navigator.pop(context);
               }
             },
             label: _isLoading

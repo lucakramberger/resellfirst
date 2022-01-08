@@ -811,8 +811,9 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     createdat: DateTime.now().toString(),
                     mainimagename: 'empty');
                 Provider.of<ItemsProvider>(context, listen: false)
-                    .updateItem(widget.product, product)
-                    .then((value) => Navigator.pop(context));
+                    .updateItem(widget.product, product);
+                await Future.delayed(const Duration(seconds: 5));
+                Navigator.pop(context);
               }
             },
             label: _isLoading
