@@ -343,7 +343,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
       key: formKey,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Produkt hinuzfügen'),
+          title: const Text('Produkt editieren'),
         ),
         body: Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * .08),
@@ -784,9 +784,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
         ),
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
-              if (formKey.currentState!.validate() &&
-                  images!.isNotEmpty &&
-                  brand != 'marke') {
+              if (formKey.currentState!.validate() && brand != 'marke') {
                 releaseDate = selectedDate.month.toString() +
                     '.' +
                     selectedDate.year.toString();
@@ -822,7 +820,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     valueColor:
                         AlwaysStoppedAnimation<Color>(Color(0xffe78857)),
                     backgroundColor: Color(0xff85b7d6))
-                : const Text('Hinzufügen')),
+                : const Text('Editieren')),
       ),
     );
   }
