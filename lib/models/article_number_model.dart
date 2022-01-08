@@ -27,7 +27,7 @@ class ArticleNumber {
       );
 
   Map<String, dynamic> toJson() => {
-        "artikelnummer": artikelnummer,
+        "artikelnummer": artikelnummer.toString(),
         "sizeamountid": sizeamountid,
       };
 }

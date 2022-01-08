@@ -820,7 +820,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     sizes: sizes!,
                     createdat: DateTime.now().toString(),
                     mainimagename: 'empty');
-                await Provider.of<ItemsProvider>(context, listen: false)
+                Provider.of<ItemsProvider>(context, listen: false)
                     .addItem(product, false);
                 Navigator.pop(context);
               }
