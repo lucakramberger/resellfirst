@@ -101,7 +101,8 @@ class ItemsProvider extends ChangeNotifier {
     await ApiSerivce.deleteProduct(items[index].id!);
 
     List<String> imageids =
-        await ImageService.getImagenamesByProductID(items[index].id!);
+        await ImageService.getImageIDsByProductID(items[index].id!);
+    print(imageids);
 
     for (String imageid in imageids) {
       await ImageService.deleteImagesByID(imageid);

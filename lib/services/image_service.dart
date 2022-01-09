@@ -39,8 +39,11 @@ class ImageService {
       // ignore: avoid_function_literals_in_foreach_calls
       entries.forEach((element) {
         var map = Map<String, dynamic>.from(element);
-        imagenames.add(map['id']);
+        int id = map['id'];
+        imagenames.add(id.toString());
       });
+
+      print(imagenames);
 
       return imagenames;
     } else {
